@@ -6,71 +6,64 @@ const Url = require('./models/url');
 
 const app = express();
 
-// डेटाबेस से कनेक्ट करें
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+  useUnifiedTopology: true
+}).then(() => console.log('MongoDB connected...'))
+  .catch(err => console.error(err));
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
-  console.log('MongoDB connected');
-});
+// Middleware
+app.use(express.static('public')); // Serve static files from 'public' folder
+app.use(express.json()); // To parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
 
-app.use(express.json());
-app.use(express.static('public'));
-
-// छोटा URL बनाएं
-app.post('/api/shorten', async (req, res) => {
-  const { originalUrl } = req.body;
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.BASE_URL;
-
-  if (!originalUrl) {
-    return res.status(400).json({ error: 'URL is required' });
+// API endpoint to create a short URL
+app.post('/shorten', async (req, res) => {
+  const { fullUrl } = req.body;
+  if (!fullUrl) {
+    return res.status(400).send({ error: 'URL is required' });
   }
 
   try {
-    let url = await Url.findOne({ originalUrl });
-
+    let url = await Url.findOne({ fullUrl });
     if (url) {
-      return res.json(url);
+      res.json(url);
     } else {
-      const urlCode = shortid.generate();
-      const shortUrl = `${baseUrl}/${urlCode}`;
-
+      const shortUrl = shortid.generate();
       url = new Url({
-        originalUrl,
+        fullUrl,
         shortUrl,
-        urlCode,
+        clicks: 0
       });
-
       await url.save();
-      return res.json(url);
+      res.json(url);
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).send({ error: 'Server error' });
   }
 });
 
-// छोटे URL पर रीडायरेक्ट करें
-app.get('/:urlCode', async (req, res) => {
+// API endpoint to redirect to the full URL
+app.get('/:shortUrl', async (req, res) => {
   try {
-    const url = await Url.findOne({ urlCode: req.params.urlCode });
-
+    const url = await Url.findOne({ shortUrl: req.params.shortUrl });
     if (url) {
-      return res.redirect(url.originalUrl);
+      url.clicks++;
+      await url.save();
+      return res.redirect(url.fullUrl);
     } else {
-      return res.status(404).json({ error: 'No URL found' });
+      return res.status(404).send('URL not found');
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).send('Server error');
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
-module.exports = app; // Vercel के लिए
+// Export the app for Vercel
+module.exports = app;
