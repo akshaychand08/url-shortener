@@ -11,13 +11,17 @@
     }
   ],
   "routes": [
+    // Route API calls to the serverless function
     {
       "src": "/api/(.*)",
       "dest": "index.js"
     },
+    // Route short URLs (anything that doesn't start with /api/ and isn't a static file)
+    // to the serverless function. The static files are served automatically by Vercel.
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "index.js"
     }
   ]
 }
+
