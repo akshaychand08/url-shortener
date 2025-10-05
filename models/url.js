@@ -5,10 +5,14 @@ const urlSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  shortUrl: {
+  shortCode: {
     type: String,
     required: true,
     unique: true
+  },
+  shortUrl: {
+    type: String,
+    required: true,
   },
   clicks: {
     type: Number,
