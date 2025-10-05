@@ -14,11 +14,13 @@ const urlSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // === YEH FIELD HONA ZAROORI HAI ===
   clicks: {
     type: Number,
     required: true,
     default: 0
   }
+  // ===================================
 });
 
 module.exports = mongoose.model('Url', urlSchema);
