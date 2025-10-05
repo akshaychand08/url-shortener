@@ -1,35 +1,37 @@
 const form = document.getElementById('shorten-form');
-const originalUrlInput = document.getElementById('original-url');
+const fullUrlInput = document.getElementById('fullUrl');
 const resultDiv = document.getElementById('result');
-const shortUrlLink = document.getElementById('short-url');
+const shortUrlLink = document.getElementById('shortUrlLink');
 const copyBtn = document.getElementById('copy-btn');
 
 form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const originalUrl = originalUrlInput.value;
+  e.preventDefault();
+  const fullUrl = fullUrlInput.value;
 
-    try {
-        const response = await fetch('/api/shorten', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ originalUrl }),
-        });
+  try {
+    const response = await fetch('/shorten', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fullUrl }),
+    });
 
-        const data = await response.json();
-
-        if (response.ok) {
-            shortUrlLink.href = data.shortUrl;
-            shortUrlLink.textContent = data.shortUrl;
-            resultDiv.classList.remove('hidden');
-        } else {
-            alert(data.error);
-        }
-    } catch (err) {
-        console.error(err);
-        alert('An error occurred.');
+    if (!response.ok) {
+        throw new Error('Failed to shorten URL');
     }
+
+    const data = await response.json();
+    const shortUrl = `${window.location.origin}/${data.shortUrl}`;
+    
+    shortUrlLink.href = shortUrl;
+    shortUrlLink.textContent = shortUrl;
+    resultDiv.classList.remove('hidden');
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Something went wrong. Please try again.');
+  }
 });
 
 copyBtn.addEventListener('click', () => {
