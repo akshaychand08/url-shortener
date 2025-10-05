@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const shortid = require('shortid');
-const path = require('path'); // Yeh line add ki gayi hai
+const path = require('path'); 
 const Url = require('./models/url');
 
 const app = express();
@@ -14,20 +14,20 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('MongoDB connected...'))
   .catch(err => console.error(err));
 
-// Middleware
-app.use(express.static('public')); // Serve static files from 'public' folder
-app.use(express.json()); // To parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
-
-
 // ==========================================================
-// === YEH CODE BLOCK ADD KIYA GAYA HAI PROBLEM FIX KARNE KE LIYE ===
+// === YEH LINE BADLI GAYI HAI PROBLEM FIX KARNE KE LIYE ===
+// Serve static files from the 'public' directory using an absolute path
+app.use(express.static(path.join(__dirname, 'public')));
+// ==========================================================
+
+// Middleware to parse JSON and URL-encoded bodies
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
+
 // Root route to serve the index.html file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-// ==========================================================
-
 
 // API endpoint to create a short URL
 app.post('/shorten', async (req, res) => {
@@ -57,8 +57,7 @@ app.post('/shorten', async (req, res) => {
 });
 
 // API endpoint to redirect to the full URL
-app.get('/:shortUrl', async (req, res) => {
-  // Yeh check zaroori hai taaki 'shorten' jaise path ko short URL na samjha jaye
+app.get('/:shortUrl', async (req, res, next) => {
   if (req.params.shortUrl === 'shorten') {
     return next();
   }
@@ -70,7 +69,7 @@ app.get('/:shortUrl', async (req, res) => {
       await url.save();
       return res.redirect(url.fullUrl);
     } else {
-      return res.status(404).send('URL not found');
+      return res.status(404).sendFile(path.join(__dirname, 'public', '404.html')); // Optional: a 404 page
     }
   } catch (err) {
     console.error(err);
