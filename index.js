@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const shortid = require('shortid');
+const path = require('path'); // Yeh line add ki gayi hai
 const Url = require('./models/url');
 
 const app = express();
@@ -17,6 +18,16 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(express.static('public')); // Serve static files from 'public' folder
 app.use(express.json()); // To parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
+
+
+// ==========================================================
+// === YEH CODE BLOCK ADD KIYA GAYA HAI PROBLEM FIX KARNE KE LIYE ===
+// Root route to serve the index.html file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+// ==========================================================
+
 
 // API endpoint to create a short URL
 app.post('/shorten', async (req, res) => {
@@ -47,6 +58,11 @@ app.post('/shorten', async (req, res) => {
 
 // API endpoint to redirect to the full URL
 app.get('/:shortUrl', async (req, res) => {
+  // Yeh check zaroori hai taaki 'shorten' jaise path ko short URL na samjha jaye
+  if (req.params.shortUrl === 'shorten') {
+    return next();
+  }
+  
   try {
     const url = await Url.findOne({ shortUrl: req.params.shortUrl });
     if (url) {
