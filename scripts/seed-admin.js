@@ -1,5 +1,4 @@
-// File: scripts/seed-admin.js
-```javascript
+
 require('dotenv').config({ path: '../.env' }); // Adjust path if running from project root
 const mongoose = require('mongoose');
 const User = require('../api/models/User');
