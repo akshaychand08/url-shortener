@@ -1,1 +1,83 @@
-#
+// File: public/dashboard.html
+```html
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Shortly</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <header class="p-4 shadow-md bg-white dark:bg-gray-800">
+       </header>
+
+    <main class="container mx-auto p-4 mt-8">
+        <h1 class="text-3xl font-bold mb-6">Your Dashboard</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"><h3 class="font-bold">Total Links</h3><p id="total-links" class="text-2xl">0</p></div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"><h3 class="font-bold">Total Clicks</h3><p id="total-clicks" class="text-2xl">0</p></div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"><h3 class="font-bold">Active Links</h3><p id="active-links" class="text-2xl">0</p></div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">Your Links</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="border-b dark:border-gray-700">
+                            <th class="text-left p-2">Short URL</th>
+                            <th class="text-left p-2">Original URL</th>
+                            <th class="text-left p-2">Clicks</th>
+                            <th class="text-left p-2">Status</th>
+                            <th class="text-left p-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="links-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="analytics-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Link Analytics</h2>
+                    <button id="close-analytics-btn" class="text-2xl">&times;</button>
+                 </div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold mb-2">Clicks (Last 30 Days)</h3>
+                        <canvas id="daily-clicks-chart"></canvas>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-2">Top Countries</h3>
+                        <canvas id="country-chart"></canvas>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-2">Top Referrers</h3>
+                        <div id="referrers-list"></div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-2">Devices & Browsers</h3>
+                        <canvas id="device-browser-chart"></canvas>
+                    </div>
+                 </div>
+                 <button id="export-csv-btn" class="mt-6 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Export to CSV</button>
+            </div>
+        </div>
+        
+    </main>
+    
+    <div id="toast" class="hidden fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg">
+        <p id="toast-message"></p>
+    </div>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
