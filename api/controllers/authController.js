@@ -1,5 +1,3 @@
-// File: api/controllers/authController.js
-```javascript
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
