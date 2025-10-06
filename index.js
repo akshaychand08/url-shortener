@@ -15,41 +15,28 @@ const connectDB = async () => {
     console.log('MongoDB connected successfully...');
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
-    // Exit process with failure
-    process.exit(1);
+    // REMOVED: process.exit(1) was causing crashes on Vercel
   }
 };
 
 connectDB();
 
 // --- Middleware ---
-// Serve static files (HTML, CSS, JS) from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
-// Parse JSON bodies
 app.use(express.json());
-// Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
 
 // --- Routes ---
 
-/**
- * @route   GET /
- * @desc    Serve the frontend HTML page
- */
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-/**
- * @route   POST /shorten
- * @desc    Create a new short URL
- */
 app.post('/shorten', async (req, res) => {
   const { fullUrl } = req.body;
   const baseUrl = `${req.protocol}://${req.get('host')}`;
 
-  // ADDED: More robust URL validation
   let urlObject;
   try {
     urlObject = new URL(fullUrl);
@@ -62,13 +49,11 @@ app.post('/shorten', async (req, res) => {
   }
 
   try {
-    // Check if the URL has already been shortened
     let url = await Url.findOne({ fullUrl });
     if (url) {
       return res.status(200).json(url);
     }
 
-    // If not, create a new entry
     const shortCode = nanoid(8);
     const shortUrl = `${baseUrl}/s/${shortCode}`;
 
@@ -80,7 +65,7 @@ app.post('/shorten', async (req, res) => {
     });
 
     await url.save();
-    res.status(201).json(url); // 201: Created
+    res.status(201).json(url);
 
   } catch (err) {
     console.error('Error in /shorten:', err);
@@ -88,10 +73,6 @@ app.post('/shorten', async (req, res) => {
   }
 });
 
-/**
- * @route   GET /s/:shortCode
- * @desc    Redirect to the original long URL
- */
 app.get('/s/:shortCode', async (req, res) => {
   try {
     const url = await Url.findOne({ shortCode: req.params.shortCode });
@@ -101,8 +82,7 @@ app.get('/s/:shortCode', async (req, res) => {
       await url.save();
       return res.redirect(url.fullUrl);
     } else {
-      // If the code doesn't exist, send a 404
-      return res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+      return res.status(404).send("URL Not Found");
     }
   } catch (err) {
     console.error('Error in /s/:shortCode:', err);
@@ -117,3 +97,4 @@ app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 // Export the app for Vercel
 module.exports = app;
+
