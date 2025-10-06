@@ -1,5 +1,3 @@
-// File: api/models/User.js
-```javascript
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
