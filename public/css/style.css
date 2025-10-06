@@ -1,1 +1,51 @@
-#
+/* File: public/css/style.css */
+```css
+/* Custom styles to complement Tailwind CSS */
+
+/* For a smoother theme transition */
+body, .bg-white, .bg-gray-100, .bg-gray-800, .bg-gray-900, .text-gray-900, .text-gray-100 {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Custom scrollbar for analytics modal */
+#analytics-modal::-webkit-scrollbar {
+  width: 8px;
+}
+#analytics-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.dark #analytics-modal::-webkit-scrollbar-track {
+  background: #2d3748; /* dark:bg-gray-700 */
+}
+#analytics-modal::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+#analytics-modal::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.dark #analytics-modal::-webkit-scrollbar-thumb {
+    background: #4a5568; /* dark:bg-gray-600 */
+}
+.dark #analytics-modal::-webkit-scrollbar-thumb:hover {
+    background: #718096; /* dark:bg-gray-500 */
+}
+
+
+/* Input focus styles */
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* focus:ring-2 focus:ring-blue-500 */
+}
+
+/* A subtle animation for the result area appearing */
+#result-area.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+#result-area {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
