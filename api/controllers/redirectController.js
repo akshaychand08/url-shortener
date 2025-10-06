@@ -1,5 +1,3 @@
-// File: api/controllers/redirectController.js
-```javascript
 const Link = require('../models/Link');
 const AdSnippet = require('../models/AdSnippet');
 
@@ -11,35 +9,31 @@ exports.handleRedirect = async (req, res) => {
         const link = await Link.findOne({ $or: [{ shortId }, { alias: shortId }] });
 
         if (!link) {
-            return res.status(404).send('Link not found.');
+            return res.status(404).send('<h1>Link not found.</h1>');
         }
 
         // 1. Check if enabled
         if (!link.enabled) {
-            return res.status(403).send('This link has been disabled.');
+            return res.status(403).send('<h1>This link has been disabled.</h1>');
         }
 
         // 2. Check for expiry
         if (link.expiresAt && new Date() > new Date(link.expiresAt)) {
-            // Optionally disable the link in the DB
             link.enabled = false;
             await link.save();
-            return res.status(410).send('This link has expired.');
+            return res.status(410).send('<h1>This link has expired.</h1>');
         }
 
         // 3. Check for password
-        // This is a simplified flow. A real app would present a password form.
-        // For this implementation, we just block access if a password is set.
         if (link.passwordHash) {
-            // For a full implementation, you'd serve a page asking for the password.
-            // Here we'll just show a generic message.
-            return res.status(401).send('This link is password protected.');
+            return res.status(401).send('<h1>This link is password protected.</h1>');
         }
 
         // 4. Serve Interstitial Page
-        const ad = await AdSnippet.findOne({ active: true }); // Get any active ad
+        const ad = await AdSnippet.findOne({ active: true });
         
         res.setHeader('Content-Type', 'text/html');
+        // This is the part to fix. The entire HTML block must be inside backticks `.
         res.send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -48,8 +42,8 @@ exports.handleRedirect = async (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Redirecting...</title>
                 <style>
-                    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
-                    .container { text-align: center; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f2f5; text-align: center; }
+                    .container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
                     .ad-slot { margin: 20px 0; min-height: 90px; min-width: 300px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; }
                     .timer { font-size: 24px; margin: 20px 0; }
                     #progressBarContainer { width: 100%; background-color: #e0e0e0; border-radius: 4px; overflow: hidden; }
@@ -63,7 +57,7 @@ exports.handleRedirect = async (req, res) => {
                     <h1>Please wait...</h1>
                     <p>You will be redirected shortly.</p>
                     <div class="ad-slot">
-                        ${ad ? ad.html : 'Ad content goes here.'}
+                        ${ad ? ad.html : 'Advertisement'}
                     </div>
                     <div id="progressBarContainer"><div id="progressBar"></div></div>
                     <div class="timer" id="countdown">15</div>
@@ -83,8 +77,11 @@ exports.handleRedirect = async (req, res) => {
                         if (redirected) return;
                         redirected = true;
                         
-                        // Register click in the background and then redirect
-                        navigator.sendBeacon('/api/click', JSON.stringify({ linkId }));
+                        try {
+                            navigator.sendBeacon('/api/click', JSON.stringify({ linkId }));
+                        } catch (e) {
+                            fetch('/api/click', { method: 'POST', body: JSON.stringify({ linkId }), keepalive: true });
+                        }
                         window.location.href = originalUrl;
                     }
 
@@ -95,21 +92,27 @@ exports.handleRedirect = async (req, res) => {
 
                         if (timeLeft <= 0) {
                             clearInterval(interval);
+                            skipBtn.disabled = false;
                             doRedirect();
                         }
                     }, 1000);
                     
                     setTimeout(() => {
-                        skipBtn.disabled = false;
+                        if (timeLeft > 0) { // Only enable if countdown is not already finished
+                           skipBtn.disabled = false;
+                        }
                     }, 15000);
 
-                    skipBtn.addEventListener('click', doRedirect);
+                    skipBtn.addEventListener('click', () => {
+                        clearInterval(interval);
+                        doRedirect();
+                    });
                 </script>
             </body>
             </html>
         `);
     } catch (error) {
         console.error('Redirect error:', error);
-        res.status(500).send('Server error.');
+        res.status(500).send('<h1>Server error.</h1>');
     }
 };
