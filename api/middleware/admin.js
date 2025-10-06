@@ -1,5 +1,3 @@
-// File: api/middleware/admin.js
-```javascript
 const admin = (req, res, next) => {
     if (req.user && req.user.isAdmin) {
         next();
