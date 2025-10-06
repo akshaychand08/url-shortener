@@ -1,6 +1,3 @@
-
-// File: api/controllers/userController.js
-```javascript
 const User = require('../models/User');
 const { nanoid } = require('nanoid');
 
