@@ -1,5 +1,3 @@
-// File: api/models/AdSnippet.js
-```javascript
 const mongoose = require('mongoose');
 
 const AdSnippetSchema = new mongoose.Schema({
