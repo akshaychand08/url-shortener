@@ -38,6 +38,7 @@ exports.signup = async (req, res) => {
             user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin },
         });
     } catch (error) {
+        console.error("Signup Error:", error);
         res.status(500).json({ error: 'Server error during signup.' });
     }
 };
@@ -60,6 +61,7 @@ exports.login = async (req, res) => {
             res.status(401).json({ error: 'Invalid credentials.' });
         }
     } catch (error) {
+        console.error("Login Error:", error);
         res.status(500).json({ error: 'Server error during login.' });
     }
 };
