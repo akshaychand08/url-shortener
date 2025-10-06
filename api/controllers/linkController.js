@@ -1,5 +1,3 @@
-// File: api/controllers/linkController.js
-```javascript
 const { nanoid } = require('nanoid');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
