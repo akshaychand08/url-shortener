@@ -1,6 +1,4 @@
 
-// File: public/js/ui.js
-```javascript
 // --- TOAST NOTIFICATION ---
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toast-message');
