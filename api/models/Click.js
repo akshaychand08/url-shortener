@@ -1,5 +1,3 @@
-// File: api/models/Click.js
-```javascript
 const mongoose = require('mongoose');
 
 const ClickSchema = new mongoose.Schema({
