@@ -1,6 +1,3 @@
-
-// File: api/middleware/auth.js
-```javascript
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
