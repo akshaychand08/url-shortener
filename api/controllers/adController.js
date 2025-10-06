@@ -1,5 +1,3 @@
-// File: api/controllers/adController.js
-```javascript
 const AdSnippet = require('../models/AdSnippet');
 
 // @desc    Get all ad snippets
