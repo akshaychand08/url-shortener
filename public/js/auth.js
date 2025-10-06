@@ -1,5 +1,4 @@
-// File: public/js/auth.js
-```javascript
+
 document.addEventListener('DOMContentLoaded', () => {
     const authModal = document.getElementById('auth-modal');
     const authForm = document.getElementById('auth-form');
