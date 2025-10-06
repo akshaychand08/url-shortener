@@ -1,6 +1,4 @@
 
-// File: public/js/app.js
-```javascript
 // Main application logic for index.html
 
 document.addEventListener('DOMContentLoaded', () => {
