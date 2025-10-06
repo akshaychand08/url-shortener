@@ -1,5 +1,4 @@
-// File: public/js/dashboard.js
-```javascript
+
 document.addEventListener('DOMContentLoaded', () => {
     // Redirect if not logged in
     if (!localStorage.getItem('token')) {
