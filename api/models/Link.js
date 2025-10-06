@@ -1,5 +1,3 @@
-// File: api/models/Link.js
-```javascript
 const mongoose = require('mongoose');
 
 const LinkSchema = new mongoose.Schema({
