@@ -1,47 +1,45 @@
+// File: api/controllers/linkController.js
 const { nanoid } = require('nanoid');
-const bcrypt = require('bcryptjs');
-const validator = require('validator');
-const geoip = require('geoip-lite');
-const useragent = require('useragent');
 const Link = require('../models/Link');
-const Click = require('../models/Click');
-const jwt = require('jsonwebtoken');
 const connectDB = require('../config/db');
+const jwt = require('jsonwebtoken');
 
 const getUserIdFromToken = (req) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             const token = req.headers.authorization.split(' ')[1];
             return jwt.verify(token, process.env.JWT_SECRET).id;
-        } catch (error) { return null; }
+        } catch (e) { return null; }
     }
     return null;
 };
 
 exports.createLink = async (req, res) => {
-    await connectDB(); // Ensure DB connection for serverless
-    // ... function logic ...
+    try {
+        await connectDB();
+        const { originalUrl } = req.body;
+        if (!originalUrl) {
+            return res.status(400).json({ error: 'Original URL is required' });
+        }
+        const ownerId = getUserIdFromToken(req);
+        let shortId;
+        do { shortId = nanoid(7); } while (await Link.findOne({ shortId }));
+        
+        const link = await Link.create({ originalUrl, shortId, owner: ownerId });
+        res.status(201).json({ shortUrl: `${process.env.BASE_URL}/${link.shortId}` });
+    } catch (error) {
+        console.error("Shorten Error:", error);
+        res.status(500).json({ error: 'Server error while creating link.' });
+    }
 };
-// NOTE: Add "await connectDB();" to the top of EVERY exported function below
-// to prevent the Mongoose connection error in a serverless environment.
 
-exports.registerClick = async (req, res) => {
-    await connectDB();
-    // ... function logic ...
-};
 exports.getLinks = async (req, res) => {
-    await connectDB();
-    // ... function logic ...
-};
-exports.getLinkStats = async (req, res) => {
-    await connectDB();
-    // ... function logic ...
-};
-exports.updateLink = async (req, res) => {
-    await connectDB();
-    // ... function logic ...
-};
-exports.deleteLink = async (req, res) => {
-    await connectDB();
-    // ... function logic ...
+    try {
+        await connectDB();
+        const links = await Link.find({ owner: req.user._id });
+        res.json(links);
+    } catch (error) {
+        console.error("Get Links Error:", error);
+        res.status(500).json({ error: 'Server error fetching links.' });
+    }
 };
