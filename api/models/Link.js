@@ -1,3 +1,5 @@
+// File: api/models/Link.js
+
 const mongoose = require('mongoose');
 
 const LinkSchema = new mongoose.Schema({
@@ -14,7 +16,7 @@ const LinkSchema = new mongoose.Schema({
     customDomain: { type: String, default: null }
 });
 
-// No need to define indexes here for shortId or alias,
-// as unique: true already handled it.
+LinkSchema.index({ shortId: 1 });
+LinkSchema.index({ alias: 1 });
 
 module.exports = mongoose.model('Link', LinkSchema);
