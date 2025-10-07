@@ -1,8 +1,5 @@
-// File: api/config/db.js
-
 const mongoose = require('mongoose');
 
-// Mongoose connection caching for serverless environments
 let cached = global.mongoose;
 
 if (!cached) {
