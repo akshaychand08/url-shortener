@@ -7,11 +7,6 @@ const UserSchema = new mongoose.Schema({
     passwordHash: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
     isPremium: { type: Boolean, default: false },
-    apiKeys: [{
-        key: String,
-        createdAt: { type: Date, default: Date.now },
-        revoked: { type: Boolean, default: false }
-    }],
     createdAt: { type: Date, default: Date.now },
 });
 
@@ -19,7 +14,6 @@ UserSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.passwordHash);
 };
 
-// Hash password before saving
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('passwordHash')) {
         next();
