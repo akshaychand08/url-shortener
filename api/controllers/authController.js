@@ -1,4 +1,4 @@
-// File: api/controllers/authController.js
+
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const connectDB = require('../config/db');
@@ -9,7 +9,7 @@ const generateToken = (id) => {
 
 exports.signup = async (req, res) => {
     try {
-        await connectDB();
+        await connectDB(); // This line ensures the database is connected
         const { email, password } = req.body;
         if (!email || !password || password.length < 6) {
             return res.status(400).json({ error: 'Please provide a valid email and a password of at least 6 characters.' });
@@ -28,7 +28,7 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        await connectDB();
+        await connectDB(); // This line ensures the database is connected
         const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ error: 'Please provide email and password.' });
