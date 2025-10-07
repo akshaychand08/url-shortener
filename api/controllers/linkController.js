@@ -10,7 +10,7 @@ const Click = require('../models/Click');
 const jwt = require('jsonwebtoken');
 
 // 💡 STEP 1: Import your database connection utility
-const dbConnect = require('../lib/db'); // Adjust the path if needed
+const dbConnect = require('../config/db'); // Adjust the path if needed
 
 // Helper to get user ID from token
 const getUserIdFromToken = (req) => {
