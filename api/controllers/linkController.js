@@ -9,9 +9,6 @@ const Link = require('../models/Link');
 const Click = require('../models/Click');
 const jwt = require('jsonwebtoken');
 
-// 💡 STEP 1: Import your database connection utility
-const dbConnect = require('../config/db'); // Adjust the path if needed
-
 // Helper to get user ID from token
 const getUserIdFromToken = (req) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -28,8 +25,7 @@ const getUserIdFromToken = (req) => {
 
 // --- CREATE LINK ---
 exports.createLink = async (req, res) => {
-    // 💡 STEP 2: Wait for the database connection first
-    await dbConnect();
+    // DO NOT call await dbConnect() here
 
     const { originalUrl, alias, expiresAt, password } = req.body;
 
@@ -81,31 +77,25 @@ exports.createLink = async (req, res) => {
 
 // --- REGISTER CLICK ---
 exports.registerClick = async (req, res) => {
-    await dbConnect(); // 👈 Add this line here too!
-    // ... rest of the function is the same
+    // ... function logic ...
 };
 
 // --- GET USER'S LINKS ---
 exports.getLinks = async (req, res) => {
-    await dbConnect(); // 👈 And here!
-    // ... rest of the function is the same
+    // ... function logic ...
 };
-
 
 // --- GET LINK STATS ---
 exports.getLinkStats = async (req, res) => {
-    await dbConnect(); // 👈 And here!
-    // ... rest of the function is the same
+    // ... function logic ...
 };
 
 // --- UPDATE LINK ---
 exports.updateLink = async (req, res) => {
-    await dbConnect(); // 👈 And here!
-    // ... rest of the function is the same
+    // ... function logic ...
 };
 
 // --- DELETE LINK ---
 exports.deleteLink = async (req, res) => {
-    await dbConnect(); // 👈 And here!
-    // ... rest of the function is the same
+    // ... function logic ...
 };
